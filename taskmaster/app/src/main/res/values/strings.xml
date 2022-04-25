@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">TaskMaster</string>
+    <string name="task">My Tasks</string>
+    <string name="addTask">ADD TASK</string>
+    <string name="allTask">ALL TASKS</string>
+
+    <string name="addTask2">Add Task</string>
+    <string name="taskTitle">Task Title</string>
+    <string name="myTask">My Task</string>
+    <string name="taskDesc">Task Description</string>
+    <string name="doTask">Do Something</string>
+    <string name="totalTask">total tasks: 0</string>
+
+    <string name="back">Back</string>
+
+
+
+</resources>
