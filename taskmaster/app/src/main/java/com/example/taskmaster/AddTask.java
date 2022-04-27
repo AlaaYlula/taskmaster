@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,7 +17,7 @@ public class AddTask extends AppCompatActivity {
         @Override
         public void onClick(View view) {
 
-            EditText titleEdit = findViewById(R.id.myTask);
+            EditText titleEdit = findViewById(R.id.username);
             EditText descriptionEdit = findViewById(R.id.doTask);
             //convert to string
             String title = titleEdit.getText().toString();
