@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:layout_margin="10dp"
+    android:background="@color/teal_200"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    style="@style/CardViewStyle"
+    >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No title"
+            style="@style/CustomText"
+            android:padding="10dp"
+            />
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No body"
+            style="@style/CustomText"
+            android:padding="10dp"
+
+            />
+
+        <TextView
+            android:id="@+id/state"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No state"
+            style="@style/CustomText"
+            android:padding="10dp"
+
+            />
+
+        </LinearLayout>
+
+
+<!--    <ScrollView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:scrollbars="none">-->
+<!--        &lt;!&ndash; LinearLayout Inside ScrollView &ndash;&gt;-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:orientation="vertical">-->
+
+<!--            &lt;!&ndash; create a Linear Layout with horizontal orientation and weightSum property &ndash;&gt;-->
+
+<!--                   <TextView-->
+<!--                        android:id="@+id/title"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="30dp"-->
+<!--                        android:text="No title" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/description"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="300dp"-->
+<!--                        android:text="No body" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/state"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="30dp"-->
+<!--                        android:text="No state" />-->
+<!--        </LinearLayout>-->
+<!--    </ScrollView-->>-->
+
+</androidx.cardview.widget.CardView>
