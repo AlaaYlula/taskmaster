@@ -2,6 +2,8 @@ package com.example.taskmaster;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,9 +13,16 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.taskmaster.data.Task;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -40,39 +49,70 @@ public class MainActivity extends AppCompatActivity {
             startActivity(allTaskActivity);
         }
     };
+
+    List<Task> tasksList = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         username = findViewById(R.id.username);
-        Button btnTask1 = findViewById(R.id.btn_task1);
-        btnTask1.setOnClickListener(view -> {
-            Intent intent = new Intent(this,DetailTask.class);
-            intent.putExtra("title",btnTask1.getText());
-            startActivity(intent);
-        });
-        Button btnTask2 = findViewById(R.id.btn_task2);
-        btnTask2.setOnClickListener(view -> {
-            Intent intent = new Intent(this,DetailTask.class);
-            intent.putExtra("title",btnTask2.getText());
-            startActivity(intent);
-        });
-        Button btnTask3 = findViewById(R.id.btn_task3);
-        btnTask3.setOnClickListener(view -> {
-            Intent intent = new Intent(this,DetailTask.class);
-            intent.putExtra("title",btnTask3.getText());
-            startActivity(intent);
-        });
+//////////// Lab 28 Recycler View //////////////////////
+        initialiseData();
 
+        // get the recycler view object
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        // create an Adapter // Custom Adapter
+        CustomAdapter customRecyclerViewAdapter = new CustomAdapter(
+                tasksList, position -> {
+            Toast.makeText(
+                    MainActivity.this,
+                    "The task clicked => " + tasksList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
 
-//        // Add Task Button
-//        Button addButton = findViewById(R.id.addButton);
-//        addButton.setOnClickListener(addButtonListener);
-//
-//        // ALL Task Button
-//        Button allButton = findViewById(R.id.allButton);
-//        allButton.setOnClickListener(allButtonListener);
+            Intent intent = new Intent(getApplicationContext(), DetailTask.class);
+            intent.putExtra("title",tasksList.get(position).getTitle());
+            intent.putExtra("body",tasksList.get(position).getBody());
+            intent.putExtra("state",tasksList.get(position).getState().toString());
+
+            startActivity(intent);
+        });
+        // set adapter on recycler view
+        recyclerView.setAdapter(customRecyclerViewAdapter);
+
+        // set other important properties
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+/////////// Lab 27 Intent ////////////////////
+
+//        Button btnTask1 = findViewById(R.id.btn_task1);
+//        btnTask1.setOnClickListener(view -> {
+//            Intent intent = new Intent(this,DetailTask.class);
+//            intent.putExtra("title",btnTask1.getText());
+//            startActivity(intent);
+//        });
+//        Button btnTask2 = findViewById(R.id.btn_task2);
+//        btnTask2.setOnClickListener(view -> {
+//            Intent intent = new Intent(this,DetailTask.class);
+//            intent.putExtra("title",btnTask2.getText());
+//            startActivity(intent);
+//        });
+//        Button btnTask3 = findViewById(R.id.btn_task3);
+//        btnTask3.setOnClickListener(view -> {
+//            Intent intent = new Intent(this,DetailTask.class);
+//            intent.putExtra("title",btnTask3.getText());
+//            startActivity(intent);
+//        });
+
+/////////// Lab 26
+        // Add Task Button
+        Button addButton = findViewById(R.id.addButton);
+        addButton.setOnClickListener(addButtonListener);
+
+        // ALL Task Button
+        Button allButton = findViewById(R.id.allButton);
+        allButton.setOnClickListener(allButtonListener);
     }
 
     @Override
@@ -144,4 +184,16 @@ public class MainActivity extends AppCompatActivity {
         username.setText(sharedPreferences.getString(SettingsActivity.USERNAME, "No User Name setting"));
     }
 
+/////////////////////////////////////////////////////////////////
+    private  void initialiseData(){
+        tasksList.add(new Task("Task1",
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                Task.State.Complete));
+        tasksList.add(new Task("Task2",
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                Task.State.New));
+        tasksList.add(new Task("Task3",
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                Task.State.In_Progress));
+    }
 }

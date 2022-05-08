@@ -17,9 +17,16 @@ public class DetailTask extends AppCompatActivity {
 
         // get the data
         String titleRecived = passedIntent.getStringExtra("title");
+        String bodyRecived = passedIntent.getStringExtra("body");
+        String stateRecived = passedIntent.getStringExtra("state");
 
         TextView title = findViewById(R.id.title);
+        TextView body = findViewById(R.id.description);
+        TextView state = findViewById(R.id.state);
+
         title.setText(titleRecived);
+        body.setText(bodyRecived);
+        state.setText(stateRecived);
 
 
     }
