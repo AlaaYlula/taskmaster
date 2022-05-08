@@ -24,6 +24,6 @@ create three Activities
 * DetailTask Activity : show the task title you pressed, description, and the state for this task.  
 * Add CustomAdapter so we can deal with the RecyclerView.   
 **Home Page**  
-![home](./screenshots/App.PNG)  
+![home](./screenshots/App1.PNG)  
 **Details Page**  
 ![detail](./screenshots/detailTask.PNG)    
