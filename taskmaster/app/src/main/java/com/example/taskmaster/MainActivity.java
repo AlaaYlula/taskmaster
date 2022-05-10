@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.taskmaster.data.Task;
+import com.example.taskmaster.database.AppDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,21 +61,22 @@ public class MainActivity extends AppCompatActivity {
         username = findViewById(R.id.username);
 //////////// Lab 28 Recycler View //////////////////////
         initialiseData();
+        //Lab 29
+        // Get All Tasks
+        List<Task> tasksListDatabase = AppDatabase.getInstance(getApplicationContext()).taskDao().getAll();
 
         // get the recycler view object
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         // create an Adapter // Custom Adapter
         CustomAdapter customRecyclerViewAdapter = new CustomAdapter(
-                tasksList, position -> {
+                tasksListDatabase, position -> {
             Toast.makeText(
                     MainActivity.this,
-                    "The task clicked => " + tasksList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+                    "The task clicked => " + tasksListDatabase.get(position).getTitle(), Toast.LENGTH_SHORT).show();
 
             Intent intent = new Intent(getApplicationContext(), DetailTask.class);
-            intent.putExtra("title",tasksList.get(position).getTitle());
-            intent.putExtra("body",tasksList.get(position).getBody());
-            intent.putExtra("state",tasksList.get(position).getState().toString());
-
+            //send the Id
+            intent.putExtra("id",tasksListDatabase.get(position).getId());
             startActivity(intent);
         });
         // set adapter on recycler view

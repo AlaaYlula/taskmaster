@@ -24,25 +24,25 @@
             android:padding="10dp"
             />
 
-        <TextView
-            android:id="@+id/description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="No body"
-            style="@style/CustomText"
-            android:padding="10dp"
+<!--        <TextView-->
+<!--            android:id="@+id/description"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="No body"-->
+<!--            style="@style/CustomText"-->
+<!--            android:padding="10dp"-->
 
-            />
+<!--            />-->
 
-        <TextView
-            android:id="@+id/state"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="No state"
-            style="@style/CustomText"
-            android:padding="10dp"
+<!--        <TextView-->
+<!--            android:id="@+id/state"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="No state"-->
+<!--            style="@style/CustomText"-->
+<!--            android:padding="10dp"-->
 
-            />
+<!--            />-->
 
         </LinearLayout>
 

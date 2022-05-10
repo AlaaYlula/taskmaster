@@ -38,4 +38,7 @@ dependencies {
 
     testImplementation 'androidx.test.espresso:espresso-intents:3.4.0'
     implementation "androidx.cardview:cardview:1.0.0"
+
+    implementation "androidx.room:room-runtime:2.4.2"
+    annotationProcessor "androidx.room:room-compiler:2.4.2"
 }

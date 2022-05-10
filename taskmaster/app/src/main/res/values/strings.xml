@@ -21,6 +21,12 @@
     <string name="Task1">"Task 1 "</string>
     <string name="Task2">Task 2</string>
     <string name="Task3">Task 3</string>
+    <string name="state">Task State</string>
 
 
+    <string-array name="states">
+        <item>New</item>
+        <item>In_Progress</item>
+        <item>Complete</item>
+    </string-array>
 </resources>

@@ -35,8 +35,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
     @Override
     public void onBindViewHolder(@NonNull CustomViewHolder holder, int position) {
         holder.title.setText(tasksList.get(position).getTitle());
-        holder.body.setText(tasksList.get(position).getBody());
-        holder.state.setText(tasksList.get(position).getState().toString());
+//        holder.body.setText(tasksList.get(position).getBody());
+//        holder.state.setText(tasksList.get(position).getState().toString());
     }
 
     @Override
@@ -63,8 +63,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
             this.listener = listener;
 
             title = itemView.findViewById(R.id.title);
-            body = itemView.findViewById(R.id.description);
-            state = itemView.findViewById(R.id.state);
+//            body = itemView.findViewById(R.id.description);
+//            state = itemView.findViewById(R.id.state);
 
             itemView.setOnClickListener(view -> listener.onTaskClicked(getAdapterPosition()));
         }
