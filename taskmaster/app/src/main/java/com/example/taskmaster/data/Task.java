@@ -1,10 +1,17 @@
 package com.example.taskmaster.data;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity
 public class Task {
 
-    String title;
-    String body;
-    State state;
+    @PrimaryKey(autoGenerate = true)
+    public int id;
+
+    public String title;
+    public String body;
+    public State state;
 
     public enum State {
         New,
@@ -28,5 +35,9 @@ public class Task {
 
     public State getState() {
         return state;
+    }
+
+    public int getId() {
+        return id;
     }
 }

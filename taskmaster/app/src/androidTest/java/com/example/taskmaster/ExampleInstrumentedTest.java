@@ -48,13 +48,13 @@ public class ExampleInstrumentedTest {
         // This view is in a different Activity, no need to tell Espresso.
         onView(withId(R.id.username)).check(matches(withText("Espresso")));
     }
-    @Test
-    public void changeText_newActivityTest() {
-        // press the button.
-        onView(withId(R.id.btn_task1)).perform(click());
-
-        // This view is in a different Activity, no need to tell Espresso.
-        onView(withId(R.id.title)).check(matches(withText("Task 1")));
-    }
+//    @Test
+//    public void changeText_newActivityTest() {
+//        // press the button.
+//        onView(withId(R.id.btn_task1)).perform(click());
+//
+//        // This view is in a different Activity, no need to tell Espresso.
+//        onView(withId(R.id.title)).check(matches(withText("Task 1")));
+//    }
 
 }
