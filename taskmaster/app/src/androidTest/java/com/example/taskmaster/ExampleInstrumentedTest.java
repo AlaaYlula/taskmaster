@@ -2,6 +2,9 @@ package com.example.taskmaster;
 
 import android.content.Context;
 
+import androidx.test.espresso.Espresso;
+
+import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -9,19 +12,23 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.*;
-
 import org.junit.Rule;
-import org.junit.Test;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
+import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+/////////////////
 
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
+
+import androidx.test.rule.ActivityTestRule;
+
+
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -31,6 +38,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
 
+
     @Test
     public void useAppContext() {
         // Context of the app under test.
@@ -38,23 +46,43 @@ public class ExampleInstrumentedTest {
         assertEquals("com.example.taskmaster", appContext.getPackageName());
     }
 
+    @Rule
+    public ActivityTestRule<MainActivity> mainActivity = new ActivityTestRule<> (MainActivity.class);
     @Test
-    public void changeText_newActivity() {
-        // Type text and then press the button.
-        onView(withId(R.id.username)).perform(typeText("Espresso"),
-                closeSoftKeyboard());
-        onView(withId(R.id.submit)).perform(click());
+    public void changeText_Setting_newActivity() {
 
-        // This view is in a different Activity, no need to tell Espresso.
-        onView(withId(R.id.username)).check(matches(withText("Espresso")));
+        openActionBarOverflowOrOptionsMenu(mainActivity.getActivity());
+        onView(withText("setting")).perform(click());
+        // Type text and then press the button.
+        onView(withId(R.id.username)).perform(clearText());
+        onView(withId(R.id.username)).perform(typeText("Alaa"));
+        onView(withId(R.id.submit)).perform(click());
+        Espresso.onView(withText("Alaa")).check(matches(isDisplayed()));
+
     }
-//    @Test
-//    public void changeText_newActivityTest() {
-//        // press the button.
-//        onView(withId(R.id.btn_task1)).perform(click());
-//
-//        // This view is in a different Activity, no need to tell Espresso.
-//        onView(withId(R.id.title)).check(matches(withText("Task 1")));
-//    }
+    @Test
+    public void OnclickTask() {
+
+        onView(withId(R.id.recycler_view))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        onView(withId(R.id.title)).check(matches(withText("Read")));
+
+    }
+
+    @Test
+    public void addingTask() {
+        // Type text and then press the button.
+        Espresso.onView(withId(R.id.addButton)).perform(click());
+        onView(withId(R.id.username)).perform(clearText());
+        onView(withId(R.id.username)).perform(typeText("Task2"));
+        onView(withId(R.id.doTask)).perform(clearText());
+        onView(withId(R.id.doTask)).perform(typeText("Task2 Description"));
+
+        Espresso.closeSoftKeyboard();
+
+        onView(withId(R.id.button)).perform(click());
+        Espresso.onView(withText("Task2")).check(matches(isDisplayed()));
+    }
+
 
 }
