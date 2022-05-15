@@ -39,3 +39,16 @@ create three Activities
 ![home](./screenshots/App29.PNG)  
 **Details Page**  
 ![detail](./screenshots/Detail29.PNG)      
+
+### Lab 31
+Only added the Espresso Test.[Test](https://github.com/AlaaYlula/taskmaster/blob/main/taskmaster/app/src/androidTest/java/com/example/taskmaster/ExampleInstrumentedTest.java)  
+create three Activities   
+* Main Activity : has two Tasks buttons, Add Task and All Tasks, the user name , and list for the all tasks.  
+* Settings Activity : Let the user write his/het user name and submit by click on submit button to save the username.  
+* DetailTask Activity : show the task title you pressed, description, and the state for this task. It has delete button for deleteing this task.  
+* Add CustomAdapter so we can deal with the RecyclerView. 
+* Add Room Library and use the Database to store the tasks record.    
+**Home Page**  
+![home](./screenshots/App29.PNG)  
+**Details Page**  
+![detail](./screenshots/Detail29.PNG)      
