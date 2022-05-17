@@ -8,7 +8,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.taskmaster.data.Task;
+//import com.example.taskmaster.data.Task;
+// Change the Task class To be Amplify :
+import com.amplifyframework.datastore.generated.model.Task;
 
 import java.util.List;
 

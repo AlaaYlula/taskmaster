@@ -52,3 +52,15 @@ create three Activities
 ![home](./screenshots/App29.PNG)  
 **Details Page**  
 ![detail](./screenshots/Detail29.PNG)      
+  
+### Lab 32
+Start Work with AWS Amplify.  
+* Main Activity : has two Tasks buttons, Add Task and All Tasks, the user name , and list for the all tasks(I think still need sync because it has some delay to render the all tasks).  
+* Settings Activity : Let the user write his/het user name and submit by click on submit button to save the username.  
+* DetailTask Activity : show the task title you pressed, description, and the state for this task. It has delete button for deleteing this task(Not work now). Still not work correctly, I got the correct task in the logcat but not in the Emulator.   
+* Add CustomAdapter so we can deal with the RecyclerView. 
+* Add  AWS Amplify and use the DynamoDB to store the tasks record.    
+**Home Page**  
+![home](./screenshots/App32.PNG)  
+**DynamoDB**  
+![detail](./screenshots/DynamoDB.PNG)       
