@@ -1,0 +1,15 @@
+input AMPLIFY { globalAuthRule: AuthRule = { allow: public } }
+
+
+type Task @model {
+  id: ID!
+  title: String!
+  description: String
+  state: State
+}
+
+enum State {
+       New
+       In_Progress
+       Complete
+}

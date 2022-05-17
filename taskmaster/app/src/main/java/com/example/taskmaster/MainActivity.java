@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -14,14 +13,16 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.Button;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.taskmaster.data.Task;
-import com.example.taskmaster.database.AppDatabase;
+import com.amplifyframework.AmplifyException;
+import com.amplifyframework.api.aws.AWSApiPlugin;
+import com.amplifyframework.core.Amplify;
+import com.amplifyframework.datastore.AWSDataStorePlugin;
+import com.amplifyframework.datastore.generated.model.Task;
+//import com.example.taskmaster.data.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    List<Task> tasksList = new ArrayList<>();
+    List<com.example.taskmaster.data.Task> tasksList = new ArrayList<>();
 
 
 
@@ -61,13 +62,39 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Amplify Configure
+        configureAmplify();
+
         username = findViewById(R.id.username);
 //////////// Lab 28 Recycler View //////////////////////
-        initialiseData();
+
+        //initialiseData();
+
         //Lab 29
         // Get All Tasks
-        List<Task> tasksListDatabase = AppDatabase.getInstance(getApplicationContext()).taskDao().getAll();
+        //List<Task> tasksListDatabase = AppDatabase.getInstance(getApplicationContext()).taskDao().getAll();
 
+        //////////////////////////////////////////////
+        /*
+          Lab 32 AWS Amplify
+          Data store query
+         */
+        List<Task> tasksListDatabase = new ArrayList<>();
+        // Lab 32 AWS Amplify
+        // Data store query
+        Amplify.DataStore.query(Task.class,
+                tasks -> {
+                    while (tasks.hasNext()) {
+                        Task task = tasks.next();
+                        tasksListDatabase.add(task);
+                        Log.i(TAG, "==== Task ====");
+                        Log.i(TAG, "Name: " + task.getTitle());
+                    }
+                },
+                failure -> Log.e(TAG, "Could not query DataStore", failure)
+        );
+       // Log.i(TAG,"List: "+tasksListDatabase);
+        //////////////////////////////////////////////
         // get the recycler view object
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         // create an Adapter // Custom Adapter
@@ -190,19 +217,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
 /////////////////////////////////////////////////////////////////
-    private  void initialiseData(){
-        tasksList.add(new Task("Task1",
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                Task.State.Complete));
-        tasksList.add(new Task("Task2",
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                Task.State.New));
-        tasksList.add(new Task("Task3",
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                Task.State.In_Progress));
-    }
+//    private  void initialiseData(){
+//        tasksList.add(new Task("Task1",
+//                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+//                Task.State.Complete));
+//        tasksList.add(new Task("Task2",
+//                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+//                Task.State.New));
+//        tasksList.add(new Task("Task3",
+//                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+//                Task.State.In_Progress));
+//    }
+/////////////////////////////////////////////////////// AWS Amplify ///////////////////////////
+    private void configureAmplify() {
+        try {
+            Amplify.addPlugin(new AWSApiPlugin());
+            Amplify.addPlugin(new AWSDataStorePlugin());
+            Amplify.configure(getApplicationContext());
 
-    public Context getActivity() {
-        return getApplicationContext();
+            Log.i(TAG, "Initialized Amplify");
+        } catch (AmplifyException e) {
+            Log.e(TAG, "Could not initialize Amplify", e);
+        }
     }
 }
