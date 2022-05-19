@@ -13,14 +13,13 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.amplifyframework.api.graphql.model.ModelMutation;
+import com.amplifyframework.api.graphql.model.ModelQuery;
 import com.amplifyframework.core.Amplify;
 import com.amplifyframework.datastore.generated.model.State;
 import com.amplifyframework.datastore.generated.model.Task;
+import com.amplifyframework.datastore.generated.model.Team;
 
-import java.nio.charset.StandardCharsets;
-
-
-// import com.example.taskmaster.data.Task;
+import java.util.ArrayList;
 
 public class AddTask extends AppCompatActivity {
     private static final String TAG = "AddTask";
@@ -33,13 +32,16 @@ public class AddTask extends AppCompatActivity {
             EditText titleEdit = findViewById(R.id.username);
             EditText descriptionEdit = findViewById(R.id.doTask);
             Spinner stateSelector = findViewById(R.id.state_selector);
+            Spinner teamSelector = findViewById(R.id.teams);
 
             //convert to string
             String title = titleEdit.getText().toString();
             String description = descriptionEdit.getText().toString();
             // Read https://stackoverflow.com/questions/1947933/how-to-get-spinner-value
             String state_String = stateSelector.getSelectedItem().toString();
+            String team_String = teamSelector.getSelectedItem().toString();
 
+            Log.i(TAG, "clicked item: " + team_String);
             // To convert the String to Enum so can added to the Task constructor
             //Task.State state = Enum.valueOf(Task.State.class,state_String);
 
@@ -61,38 +63,39 @@ public class AddTask extends AppCompatActivity {
 //            //System.out.println("***************************"+newTaskId);
 
             // Lab 32
-            Task task = Task.builder()
-                    .title(title)
-                    .description(description)
-                    .state(Enum.valueOf(State.class,state_String))
-                    .build();
+            Amplify.API.query(
+                    ModelQuery.list(Team.class, Team.NAME.eq(team_String)),
+                    response -> {
+                        for (Team teamLoop : response.getData()) {
+                            if(teamLoop.getName().equals(team_String)){
+                                Task task = Task.builder()
+                                        .title(title)
+                                        .teamTasksId(teamLoop.getId())
+                                        .description(description)
+                                        .state(Enum.valueOf(State.class,state_String))
+                                        .build();
+                                Log.i(TAG, "***** Saved item: " +task);
+                                // Data store save
+                                Amplify.DataStore.save(task,
+                                        success -> Log.i(TAG, "Saved item: " + success.item().getTitle()),
+                                        error -> Log.e(TAG, "Could not save item to DataStore", error)
+                                );
 
-            Log.i(TAG, "***** Saved item: " +task);
-            // Data store save
-            Amplify.DataStore.save(task,
-                    success -> Log.i(TAG, "Saved item: " + success.item().getTitle()),
-                    error -> Log.e(TAG, "Could not save item to DataStore", error)
-            );
+                                // API save to backend
+                                Amplify.API.mutate(
+                                        ModelMutation.create(task),
+                                        success -> Log.i(TAG, "Saved item: " + success.getData().getTitle()),
+                                        error -> Log.e(TAG, "Could not save item to API", error)
+                                );
+                            }
+                        }
 
-            // API save to backend
-            Amplify.API.mutate(
-                    ModelMutation.create(task),
-                   success -> Log.i(TAG, "Saved item: " + success.getData().getTitle()),
-                   error -> Log.e(TAG, "Could not save item to API", error)
-            );
-
-            // Datastore and API sync
-            Amplify.DataStore.observe(Task.class,
-                    started -> {
-                        Log.i(TAG, "Observation began.");
-                        // TODO: 5/17/22 Update the UI thread with in this call method
-                        // Manipulate your views
-
-                        // call handler
+//                        // Use To do Sync
+//                        runOnUiThread(() -> {
+//
+//                        });
                     },
-                    change -> Log.i(TAG, change.item().toString()),
-                    failure -> Log.e(TAG, "Observation failed.", failure),
-                    () -> Log.i(TAG, "Observation complete.")
+                    error -> Log.e("MyAmplifyApp", error.toString(), error)
             );
 
             Toast.makeText(getApplicationContext(), "task Added", Toast.LENGTH_SHORT).show();
@@ -118,6 +121,40 @@ public class AddTask extends AppCompatActivity {
 
         // set adapter
         stateSelector.setAdapter(spinnerAdapter);
+
+        ////////////////////// Team Spinner
+
+        Amplify.API.query(
+                ModelQuery.list(Team.class),
+                response -> {
+                    ArrayList<Team> teamsList = new ArrayList<>();
+                    for (Team team : response.getData()) {
+                        teamsList.add(team);
+                    }
+
+                    runOnUiThread(() -> {
+                        String[] teamsName = new String[teamsList.size()];
+
+                        for (int i = 0; i < teamsList.size(); i++) {
+                            teamsName[i] = teamsList.get(i).getName();
+                        }
+                        // create adapter
+                        ArrayAdapter<String> spinnerAdapterTeam = new ArrayAdapter<String>(
+                                this,
+                                androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
+                                teamsName
+                        );
+                        Spinner stateSelectorTeam = findViewById(R.id.teams);
+
+                        // set adapter
+                        stateSelectorTeam.setAdapter(spinnerAdapterTeam);
+                    });
+                },
+                error -> Log.e(TAG, "Query failure", error)
+        );
+
+        ////////////////////////////
+
 
         //Back Button
         Button backButton = findViewById(R.id.backButton);

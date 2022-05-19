@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 // Change the Task class To be Amplify :
 import com.amplifyframework.datastore.generated.model.Task;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder> {
@@ -70,6 +71,10 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
 
             itemView.setOnClickListener(view -> listener.onTaskClicked(getAdapterPosition()));
         }
+    }
+
+    public void setTasksList(List<Task> tasksList){
+        this.tasksList = tasksList;
     }
 
 

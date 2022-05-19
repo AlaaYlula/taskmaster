@@ -22,6 +22,8 @@
     <string name="Task2">Task 2</string>
     <string name="Task3">Task 3</string>
     <string name="state">Task State</string>
+    <string name="teams">teams</string>
+    <string name="Alltext">TextView</string>
 
 
     <string-array name="states">
