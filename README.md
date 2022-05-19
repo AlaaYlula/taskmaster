@@ -64,3 +64,16 @@ Start Work with AWS Amplify.
 ![home](./screenshots/App32.PNG)  
 **DynamoDB**  
 ![detail](./screenshots/DynamoDB.PNG)       
+  
+### Lab 33
+Start Work with AWS Amplify.  
+* Main Activity : has two Tasks buttons, Add Task and All Tasks, the user name , and list for the all tasks(The List of tasks must be only the ones which belongs to the team, BUT it doesn't work with me, there is some issue in reading the team name saved).
+* Settings Activity : Let the user write his/het user name, chose the team and submit by click on submit button to save the username and the team name.  
+* DetailTask Activity : show the task title you pressed, description, and the state for this task. It has delete button for deleteing this task(Not work now).  
+* Add CustomAdapter so we can deal with the RecyclerView. 
+* Add  AWS Amplify and use the DynamoDB to store the tasks record.    
+**Home Page**  
+![home](./screenshots/App.PNG)  
+**DynamoDB**  
+![team](./screenshots/teamDynamo.PNG)  
+  
