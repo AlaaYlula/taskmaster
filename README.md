@@ -1,3 +1,4 @@
+
 # taskmaster
 ### Lab 26 
 create three Activities   
@@ -91,3 +92,4 @@ Start Work with AWS Amplify.
 ![home](./screenshots/App.PNG)  
 **DynamoDB**  
 ![team](./screenshots/teamDynamo.PNG)  
+
