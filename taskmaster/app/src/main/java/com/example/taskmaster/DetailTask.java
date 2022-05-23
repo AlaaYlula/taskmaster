@@ -35,11 +35,14 @@ public class DetailTask extends AppCompatActivity {
         //get the task by Id
         //Task taskRecived = AppDatabase.getInstance(getApplicationContext()).taskDao().getTaskById(idRecived);
 
+
+
         TextView title = findViewById(R.id.title);
         TextView body = findViewById(R.id.description);
         TextView state = findViewById(R.id.state);
 
         // API query
+
 //        Amplify.API.query(
 //                ModelQuery.list(com.amplifyframework.datastore.generated.model.Task.class, com.amplifyframework.datastore.generated.model.Task.ID.eq(id)),
 //                response -> {
@@ -47,6 +50,7 @@ public class DetailTask extends AppCompatActivity {
 //                        Log.i(TAG, "------------------> " + task.getTitle());
 //                        taskReceived.set(task);
 //                    }
+//
 //                    runOnUiThread(() -> {
 //
 //                    });
@@ -58,6 +62,7 @@ public class DetailTask extends AppCompatActivity {
                 ModelQuery.get(Task.class, id),
                 response -> {
                     Task taskTest = response.getData();
+
                     // Send message to the handler to show The task Details  >>
 //                    Bundle bundle = new Bundle();
 //                    bundle.putString("taskReceived",response.toString());

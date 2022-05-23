@@ -106,26 +106,26 @@ public class MainActivity extends AppCompatActivity {
         //Lab 32 :
         // Receive message from API Query to show the Tasks List in the Recycler View >>
         handler = new Handler(Looper.getMainLooper(), msg -> {
-                // get the recycler view object
-                RecyclerView recyclerView = findViewById(R.id.recycler_view);
-                // create an Adapter // Custom Adapter
-                customRecyclerViewAdapter = new CustomAdapter(
-                        tasksListDatabase, position -> {
-                    Toast.makeText(
-                            MainActivity.this,
-                            "The task clicked => " + tasksListDatabase.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+            // get the recycler view object
+            RecyclerView recyclerView = findViewById(R.id.recycler_view);
+            // create an Adapter // Custom Adapter
+            customRecyclerViewAdapter = new CustomAdapter(
+                    tasksListDatabase, position -> {
+                Toast.makeText(
+                        MainActivity.this,
+                        "The task clicked => " + tasksListDatabase.get(position).getTitle(), Toast.LENGTH_SHORT).show();
 
-                    Intent intent = new Intent(getApplicationContext(), DetailTask.class);
-                    //send the Id
-                    intent.putExtra("id", tasksListDatabase.get(position).getId());
-                    startActivity(intent);
-                });
-                // set adapter on recycler view
-                recyclerView.setAdapter(customRecyclerViewAdapter);
+                Intent intent = new Intent(getApplicationContext(), DetailTask.class);
+                //send the Id
+                intent.putExtra("id", tasksListDatabase.get(position).getId());
+                startActivity(intent);
+            });
+            // set adapter on recycler view
+            recyclerView.setAdapter(customRecyclerViewAdapter);
 
-                // set other important properties
-                recyclerView.setHasFixedSize(true);
-                recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            // set other important properties
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
             return true;
 
@@ -171,23 +171,23 @@ public class MainActivity extends AppCompatActivity {
                     for(Team team : teams.getData()){
                         if(team.getName().equals(teamName)){
                             Amplify.API.query(
-                               ModelQuery.list(Task.class,Task.TEAM_TASKS_ID.eq(team.getId())),
-                               success -> {
-                                 tasksListDatabase = new ArrayList<>();
-                                 if (success.hasData()) {
-                                     for (Task task : success.getData()) {
-                                         tasksListDatabase.add(task);
-                                     }
-                                 }
-                               Log.i(TAG, "==== Task List  ====" + tasksListDatabase);
-                                 // Send message to the handler to show the Tasks List in the Recycler View >>
-                               Bundle bundle = new Bundle();
-                               bundle.putString("teamName", success.toString());
+                                    ModelQuery.list(Task.class,Task.TEAM_TASKS_ID.eq(team.getId())),
+                                    success -> {
+                                        tasksListDatabase = new ArrayList<>();
+                                        if (success.hasData()) {
+                                            for (Task task : success.getData()) {
+                                                tasksListDatabase.add(task);
+                                            }
+                                        }
+                                        Log.i(TAG, "==== Task List  ====" + tasksListDatabase);
+                                        // Send message to the handler to show the Tasks List in the Recycler View >>
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString("teamName", success.toString());
 
-                               Message message = new Message();
-                               message.setData(bundle);
+                                        Message message = new Message();
+                                        message.setData(bundle);
 
-                               handler.sendMessage(message);
+                                        handler.sendMessage(message);
 //                                        runOnUiThread(() -> {
 //                                            // get the recycler view object
 //                                            RecyclerView recyclerView = findViewById(R.id.recycler_view);
@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
 //                                            recyclerView.setLayoutManager(new LinearLayoutManager(this));
 //                                        });
                                     },
-                               error -> Log.e(TAG, error.toString(), error)
+                                    error -> Log.e(TAG, error.toString(), error)
                             );
                         }
                     }
@@ -278,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         setUserNameTeamName();
         getTeamTask();
-       // getTasks();
+        // getTasks();
     }
 
 
@@ -329,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
 
         // set text on text view User Name
         username.setText(sharedPreferences.getString(SettingsActivity.USERNAME, "No User Name setting"));
-       // Log.i(TAG, "==== user name new   ====" + username);
+        // Log.i(TAG, "==== user name new   ====" + username);
         teamName =  sharedPreferences.getString(SettingsActivity.TEAMNAME, "No Team setting");
         Log.i(TAG, "==== Team name new   ====" + teamName);
     }
