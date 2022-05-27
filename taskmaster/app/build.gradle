@@ -25,9 +25,15 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
+    implementation 'androidx.annotation:annotation:1.2.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
     androidTestImplementation 'androidx.test:runner:1.4.0'
     androidTestImplementation "androidx.test.espresso:espresso-contrib:3.4.0"
     //
@@ -50,4 +56,7 @@ dependencies {
 
     implementation 'com.amplifyframework:aws-api:1.35.3'
     implementation 'com.amplifyframework:aws-datastore:1.35.3'
+
+    implementation 'com.amplifyframework:aws-auth-cognito:1.35.4'
+
 }
