@@ -115,3 +115,24 @@ Start Work with AWS Amplify.
 **Signup**  
 ![team](./screenshots/signup.PNG)  
 
+
+### Lab 37
+Use S3 for store images.  
+Use Cognito for Authentication.
+Build a signed APK for the application.  
+Start Work with AWS Amplify.  
+* Login page: has signup prompt. And create a AlertDialog if error happens.  
+* Signup page: has signin prompt. And create a AlertDialog if error happens. redirect to the verification code page when end the signup.   
+* Verification code page: Enter the verification code and go to loggin page.  
+* Main Activity : has two Tasks buttons, Add Task and All Tasks, the user name , and list for the all tasks(The List of tasks must be only the ones which belongs to the team).
+* Settings Activity : Let the user write his/het user name, chose the team and submit by click on submit button to save the username and the team name.  
+* DetailTask Activity : show the image for this task and the task title you pressed, description, and the state for this task. It has delete button for deleteing this task(Not work now).  
+* AddTask Activity : add the title, description, image and the team for this Task.  
+* Add CustomAdapter so we can deal with the RecyclerView. 
+* Add  AWS Amplify and use the DynamoDB to store the tasks record.    
+**Add Task Page**  
+![home](./screenshots/Add37.PNG)  
+**Detail Page**  
+![detial](./screenshots/detail37.PNG)
+**S3**  
+![team](./screenshots/S3Images.PNG)  
