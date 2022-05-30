@@ -10,6 +10,8 @@
     <string name="taskDesc">Task Description</string>
     <string name="doTask">Do Something</string>
     <string name="totalTask">total tasks: 0</string>
+    <string name="upload">Upload Image</string>
+
 
     <string name="back">Back</string>
 

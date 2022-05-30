@@ -12,6 +12,7 @@ type Task @model {
   title: String!
   description: String
   state: State
+  image : String
 }
 
 enum State {

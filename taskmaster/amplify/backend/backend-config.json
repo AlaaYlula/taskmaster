@@ -44,5 +44,12 @@
         ]
       }
     }
+  },
+  "storage": {
+    "s390ebc098": {
+      "service": "S3",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": []
+    }
   }
 }

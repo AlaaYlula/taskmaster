@@ -1,9 +1,15 @@
 package com.example.taskmaster;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -19,11 +25,23 @@ import com.amplifyframework.datastore.generated.model.State;
 import com.amplifyframework.datastore.generated.model.Task;
 import com.amplifyframework.datastore.generated.model.Team;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class AddTask extends AppCompatActivity {
     private static final String TAG = "AddTask";
+    private static final int REQUEST_CODE = 1234;
     private String[] state_Array = new String[]{"New", "In_Progress", "Complete"};
+    File file = null;
+
+    String imageKey = null;
+
     // Add Task
     private final View.OnClickListener addButtonListener = new View.OnClickListener() {
         @Override
@@ -41,7 +59,6 @@ public class AddTask extends AppCompatActivity {
             String state_String = stateSelector.getSelectedItem().toString();
             String team_String = teamSelector.getSelectedItem().toString();
 
-            Log.i(TAG, "clicked item: " + team_String);
             // To convert the String to Enum so can added to the Task constructor
             //Task.State state = Enum.valueOf(Task.State.class,state_String);
 
@@ -62,44 +79,54 @@ public class AddTask extends AppCompatActivity {
 //            Long newTaskId = AppDatabase.getInstance(getApplicationContext()).taskDao().insertTask(task);
 //            //System.out.println("***************************"+newTaskId);
 
-            // Lab 32
-            Amplify.API.query(
-                    ModelQuery.list(Team.class, Team.NAME.eq(team_String)),
-                    response -> {
-                        for (Team teamLoop : response.getData()) {
-                            if(teamLoop.getName().equals(team_String)){
-                                Task task = Task.builder()
-                                        .title(title)
-                                        .teamTasksId(teamLoop.getId())
-                                        .description(description)
-                                        .state(Enum.valueOf(State.class,state_String))
-                                        .build();
-                                Log.i(TAG, "***** Saved item: " +task);
-                                // Data store save
-                                Amplify.DataStore.save(task,
-                                        success -> Log.i(TAG, "Saved item: " + success.item().getTitle()),
-                                        error -> Log.e(TAG, "Could not save item to DataStore", error)
-                                );
+            // upload to s3
+            // uploads the Image
+            Amplify.Storage.uploadFile(
+                    title+".jpg",
+                    file,
+                    result ->{
+                        Log.i(TAG, "Successfully uploaded: " + result.getKey());
+                        runOnUiThread(() -> {
+                            imageKey = result.getKey();
+                            // Lab 32  // Add the Task to the DynamoDB
+                            Amplify.API.query(
+                                    ModelQuery.list(Team.class, Team.NAME.eq(team_String)),
+                                    response -> {
+                                        for (Team teamLoop : response.getData()) {
+                                            if(teamLoop.getName().equals(team_String)){
+                                                Task task = Task.builder()
+                                                        .title(title)
+                                                        .teamTasksId(teamLoop.getId())
+                                                        .description(description)
+                                                        .state(Enum.valueOf(State.class,state_String))
+                                                        .image(imageKey)
+                                                        .build();
+                                                Log.i(TAG, "***** Saved item: " +task);
+                                                // Data store save
+                                                Amplify.DataStore.save(task,
+                                                        success -> Log.i(TAG, "Saved item: " + success.item().getTitle()),
+                                                        error -> Log.e(TAG, "Could not save item to DataStore", error)
+                                                );
 
-                                // API save to backend
-                                Amplify.API.mutate(
-                                        ModelMutation.create(task),
-                                        success -> Log.i(TAG, "Saved item: " + success.getData().getTitle()),
-                                        error -> Log.e(TAG, "Could not save item to API", error)
-                                );
-                            }
-                        }
+                                                // API save to backend
+                                                Amplify.API.mutate(
+                                                        ModelMutation.create(task),
+                                                        success -> Log.i(TAG, "Saved item: " + success.getData().getTitle()),
+                                                        error -> Log.e(TAG, "Could not save item to API", error)
+                                                );
+                                            }
+                                        }
 
-//                        // Use To do Sync
-//                        runOnUiThread(() -> {
-//
-//                        });
+                                    },
+                                    error -> Log.e("MyAmplifyApp", error.toString(), error)
+                            );
+                        });
                     },
-                    error -> Log.e("MyAmplifyApp", error.toString(), error)
+                    storageFailure -> Log.e(TAG, "Upload failed", storageFailure)
+
             );
 
             Toast.makeText(getApplicationContext(), "task Added", Toast.LENGTH_SHORT).show();
-
         }
     };
     @Override
@@ -110,7 +137,7 @@ public class AddTask extends AppCompatActivity {
         Button addButton = findViewById(R.id.button);
         addButton.setOnClickListener(addButtonListener);
 
-        // create adapter
+        ////////////////////// create adapter for the State Spinner
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(
                 this,
                 androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
@@ -154,7 +181,17 @@ public class AddTask extends AppCompatActivity {
         );
 
         ////////////////////////////
+        // Lab 37
+        // Image Upload
+        Button imageUploadButton = findViewById(R.id.image_upload);
+        imageUploadButton.setOnClickListener(view2 -> {
+            // Launches photo picker in single-select mode.
+            // This means that the user can select one photo or video.
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
 
+            startActivityForResult(intent, REQUEST_CODE);
+        });
 
         //Back Button
         Button backButton = findViewById(R.id.backButton);
@@ -165,5 +202,56 @@ public class AddTask extends AppCompatActivity {
             startActivity(startMainTaskActivity);
         });
 
+    }
+    // Lab 37 // https://github.com/LTUC/amman-401d6-java
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode != Activity.RESULT_OK) {
+            // Handle error
+            Log.e(TAG, "onActivityResult: Error getting image from device");
+            return;
+        }
+
+        switch(requestCode) {
+            case REQUEST_CODE:
+                // Get photo picker response for single select.
+                Uri currentUri = data.getData();
+
+                // Do stuff with the photo/video URI.
+                Log.i(TAG, "onActivityResult: the uri is => " + currentUri);
+
+                try {
+                    Bitmap bitmap = getBitmapFromUri(currentUri);
+
+                    // Get the title of the task
+                    EditText titleEdit = findViewById(R.id.username);
+                    String title = titleEdit.getText().toString();
+
+                    file = new File(getApplicationContext().getFilesDir(), title+".jpg");
+                    OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+                    os.close();
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return;
+        }
+    }
+
+    /*
+       https://stackoverflow.com/questions/2169649/get-pick-an-image-from-androids-built-in-gallery-app-programmatically
+        */
+    private Bitmap getBitmapFromUri(Uri uri) throws IOException {
+        ParcelFileDescriptor parcelFileDescriptor =
+                getContentResolver().openFileDescriptor(uri, "r");
+        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+        parcelFileDescriptor.close();
+
+        return image;
     }
 }
