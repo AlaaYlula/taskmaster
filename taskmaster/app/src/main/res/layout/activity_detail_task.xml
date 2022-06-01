@@ -56,7 +56,10 @@
         app:layout_constraintHorizontal_bias="0.256"
         app:layout_constraintStart_toEndOf="@+id/deleteBtn"
         app:layout_constraintTop_toBottomOf="@+id/description"
-        app:layout_constraintVertical_bias="0.2" />
+        app:layout_constraintVertical_bias="0.2"
+        android:background="@drawable/btn_custom"
+        android:fontFamily="@font/roboto_regular"
+        android:textColor="@android:color/white" />
 
     <Button
         android:id="@+id/deleteBtn"
@@ -66,7 +69,10 @@
         android:layout_marginBottom="32dp"
         android:text="delete"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@drawable/btn_custom"
+        android:fontFamily="@font/roboto_regular"
+        android:textColor="@android:color/white" />
 
     <ImageView
         android:id="@+id/image"

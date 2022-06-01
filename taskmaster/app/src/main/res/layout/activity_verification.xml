@@ -6,6 +6,20 @@
     android:layout_height="match_parent"
     tools:context=".VerificationActivity">
 
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/verify"
+        android:layout_marginTop="48dp"
+        android:fontFamily="@font/indigo_daisy"
+        android:text="Email Verifying"
+        android:textSize="50sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.384"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <EditText
         android:id="@+id/verification_code"
         android:layout_width="0dp"
@@ -25,17 +39,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/verification_code" />
+        app:layout_constraintTop_toBottomOf="@+id/verification_code"
+        android:background="@drawable/btn_custom"
+        android:fontFamily="@font/roboto_regular"
+        android:textColor="@android:color/white"/>
 
     <TextView
         android:id="@+id/verify"
-        style="@style/CustomText"
         android:layout_width="325dp"
         android:layout_height="55dp"
+        android:fontFamily="@font/roboto_regular"
         android:text="Enter your verification code received in your email"
         app:layout_constraintBottom_toTopOf="@+id/verification_code"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.186"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

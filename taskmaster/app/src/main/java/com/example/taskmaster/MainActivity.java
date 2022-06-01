@@ -371,6 +371,8 @@ public class MainActivity extends AppCompatActivity {
        // username.setText(sharedPreferences.getString(SettingsActivity.USERNAME, "No User Name setting"));
 
         teamName =  sharedPreferences.getString(SettingsActivity.TEAMNAME, "No Team setting");
+        TextView textView = findViewById(R.id.team);
+        textView.setText(teamName);
         Log.i(TAG, "==== Team name new   ====" + teamName);
     }
 

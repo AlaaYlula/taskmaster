@@ -136,3 +136,31 @@ Start Work with AWS Amplify.
 ![detial](./screenshots/detail37.PNG)
 **S3**  
 ![team](./screenshots/S3Images.PNG)  
+
+  
+### Lab 38
+Use Intent Filter to receive image from other applications.  
+Use S3 for store images.  
+Use Cognito for Authentication.
+Build a signed APK for the application.  
+Start Work with AWS Amplify.  
+* Login page: has signup prompt. And create a AlertDialog if error happens.  
+* Signup page: has signin prompt. And create a AlertDialog if error happens. redirect to the verification code page when end the signup.   
+* Verification code page: Enter the verification code and go to loggin page.  
+* Main Activity : has two Tasks buttons, Add Task and All Tasks, the user name , and list for the all tasks(The List of tasks must be only the ones which belongs to the team).
+* Settings Activity : Let the user write his/het user name, chose the team and submit by click on submit button to save the username and the team name.  
+* DetailTask Activity : show the image for this task and the task title you pressed, description, and the state for this task. It has delete button for deleteing this task(Not work now).  
+* AddTask Activity : add the title, description, image and the team for this Task.  
+If the Application receive an image from other application this activity will get the intent, and upload the image to the task.  
+* Add CustomAdapter so we can deal with the RecyclerView. 
+* Add  AWS Amplify and use the DynamoDB to store the tasks record.   
+**Login**  
+![login](./screenshots/task38/signin38.PNG)  
+**Share from fb**  
+![fb](./screenshots/task38/share38.PNG)   
+**Add Task Page_receive the Image**  
+![home](./screenshots/task38/uploaded38.PNG)    
+**Add Task Page_add the task**  
+![add](./screenshots/task38/added38.PNG)  
+**Detail Page**  
+![detial](./screenshots/task38/task38.PNG)  
