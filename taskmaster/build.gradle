@@ -1,8 +1,9 @@
 buildscript {
-//    repositories {
-//        google()
-//        jcenter()
-//    }
+    repositories {
+     google()
+        jcenter()
+        maven { url "https://jitpack.io" }
+    }
 
     dependencies {
         // Add this line into `dependencies` in `buildscript`

@@ -13,6 +13,9 @@ type Task @model {
   description: String
   state: State
   image : String
+  latitude : Float
+  longitude : Float
+
 }
 
 enum State {

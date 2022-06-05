@@ -10,13 +10,13 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import android.os.Looper;
-import android.os.Message;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amplifyframework.api.graphql.model.ModelQuery;
+import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
 import com.amplifyframework.datastore.generated.model.Task;
 import com.bumptech.glide.Glide;
@@ -31,10 +31,13 @@ public class DetailTask extends AppCompatActivity {
     TextView title;
     TextView body ;
     TextView state ;
+    TextView latitude ;
+    TextView longitude ;
     ImageView imageView ;
 
     Bitmap bitmap = null;
 
+    Task task;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +57,8 @@ public class DetailTask extends AppCompatActivity {
         body = findViewById(R.id.description);
         state = findViewById(R.id.state);
         imageView = findViewById(R.id.image);
-
+        latitude = findViewById(R.id.latitude);
+        longitude = findViewById(R.id.longitude);
         // API query
 //        Amplify.API.query(
 //                ModelQuery.list(com.amplifyframework.datastore.generated.model.Task.class, com.amplifyframework.datastore.generated.model.Task.ID.eq(id)),
@@ -73,6 +77,7 @@ public class DetailTask extends AppCompatActivity {
                 ModelQuery.get(Task.class, id),
                 response -> {
                     Task taskTest = response.getData();
+                    task = taskTest;
                     if(taskTest.getImage() != null) {
                        setImage(taskTest.getImage(), taskTest);
                       // new ImageDownloader().execute(taskTest.getImage());
@@ -94,7 +99,10 @@ public class DetailTask extends AppCompatActivity {
                         title.setText(taskTest.getTitle());
                         body.setText(taskTest.getDescription());
                         state.setText(taskTest.getState().toString());
-
+                        if(!taskTest.getLatitude().toString().equals("") && !taskTest.getLongitude().toString().equals("")) {
+                            latitude.setText(taskTest.getLatitude().toString());
+                            longitude.setText(taskTest.getLongitude().toString());
+                        }
                     });
                 },
                 error -> Log.e("MyAmplifyApp", error.toString(), error)
@@ -121,6 +129,16 @@ public class DetailTask extends AppCompatActivity {
         Button deleteButton = findViewById(R.id.deleteBtn);
         deleteButton.setOnClickListener(view -> {
           // AppDatabase.getInstance(getApplicationContext()).taskDao().deleteTask(taskRecived);
+
+            // https://docs.amplify.aws/lib/restapi/delete/q/platform/android/
+//            RestOptions options = RestOptions.builder()
+//                    .addPath(task.getTitle())
+//                    .build();
+//
+//            Amplify.API.delete(options,
+//                    response2 -> Log.i(TAG, "DELETE succeeded: " + response2),
+//                    error -> Log.e(TAG, "DELETE failed.", error)
+//            );
             // Create Intent
             Intent startMainTaskActivity = new Intent(getApplicationContext(),MainActivity.class);
             //start
@@ -180,4 +198,6 @@ public class DetailTask extends AppCompatActivity {
             super.onProgressUpdate(values);
         }
     }
+
+
 }

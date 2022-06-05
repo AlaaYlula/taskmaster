@@ -2,7 +2,6 @@ package com.example.taskmaster;
 
 import android.app.Application;
 import android.util.Log;
-import android.view.View;
 
 import com.amplifyframework.AmplifyException;
 import com.amplifyframework.api.aws.AWSApiPlugin;
@@ -11,6 +10,8 @@ import com.amplifyframework.core.Amplify;
 import com.amplifyframework.datastore.AWSDataStorePlugin;
 import com.amplifyframework.storage.s3.AWSS3StoragePlugin;
 
+
+import com.amplifyframework.geo.location.AWSLocationGeoPlugin;
 public class taskMasterApplication extends Application {
 
     private static final String TAG = taskMasterApplication.class.getSimpleName() ;
@@ -26,6 +27,7 @@ public class taskMasterApplication extends Application {
 
     private void configureAmplify() {
         try {
+            Amplify.addPlugin(new AWSLocationGeoPlugin());
             Amplify.addPlugin(new AWSS3StoragePlugin());
             Amplify.addPlugin(new AWSCognitoAuthPlugin());
             Amplify.addPlugin(new AWSApiPlugin());

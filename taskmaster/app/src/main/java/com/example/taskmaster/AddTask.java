@@ -1,16 +1,28 @@
 package com.example.taskmaster;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.ParcelFileDescriptor;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -25,6 +37,16 @@ import com.amplifyframework.core.Amplify;
 import com.amplifyframework.datastore.generated.model.State;
 import com.amplifyframework.datastore.generated.model.Task;
 import com.amplifyframework.datastore.generated.model.Team;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -34,19 +56,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
+
 import java.net.URL;
 import java.util.ArrayList;
-import android.net.Uri;
 
-public class AddTask extends AppCompatActivity {
+
+public class AddTask extends AppCompatActivity implements OnMapReadyCallback  {
     private static final String TAG = "AddTask";
     private static final int REQUEST_CODE = 1234;
     public static final int DEFAULT_BUFFER_SIZE = 8192;
 
-    private String[] state_Array = new String[]{"New", "In_Progress", "Complete"};
+    private final String[] state_Array = new String[]{"New", "In_Progress", "Complete"};
     File file = null;
 
     String imageKey = null;
@@ -56,6 +76,28 @@ public class AddTask extends AppCompatActivity {
 
     Button imageUploadButton;
     Button addButton;
+
+    // initializing
+    // FusedLocationProviderClient
+    // object
+    private FusedLocationProviderClient mFusedLocationClient;
+
+    private final int PERMISSION_ID = 44;
+
+    private double latitude;
+    private double longitude;
+    // in requestNewLocationData()
+    private final LocationCallback mLocationCallback = new LocationCallback() {
+
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            Location mLastLocation = locationResult.getLastLocation();
+            latitude = mLastLocation.getLatitude();
+            longitude=mLastLocation.getLongitude();
+        }
+    };
+
+
     // Add Task
     private final View.OnClickListener addButtonListener = new View.OnClickListener() {
         @Override
@@ -95,61 +137,104 @@ public class AddTask extends AppCompatActivity {
 
             // upload to s3
             // uploads the Image
-            Amplify.Storage.uploadFile(
-                    title + ".jpg",
-                    file, // From upload picker Image OR share Image
-                    result -> {
-                        Log.i(TAG, "Successfully uploaded: " + result.getKey());
-                        runOnUiThread(() -> {
-                            imageKey = result.getKey();
-                            // Lab 32  // Add the Task to the DynamoDB
-                            Amplify.API.query(
-                                    ModelQuery.list(Team.class, Team.NAME.eq(team_String)),
-                                    response -> {
-                                        for (Team teamLoop : response.getData()) {
-                                            if (teamLoop.getName().equals(team_String)) {
-                                                Task task = Task.builder()
-                                                        .title(title)
-                                                        .teamTasksId(teamLoop.getId())
-                                                        .description(description)
-                                                        .state(Enum.valueOf(State.class, state_String))
-                                                        .image(imageKey)
-                                                        .build();
-                                                Log.i(TAG, "***** Saved item: " + task);
-                                                // Data store save
-                                                Amplify.DataStore.save(task,
-                                                        success -> Log.i(TAG, "Saved item: " + success.item().getTitle()),
-                                                        error -> Log.e(TAG, "Could not save item to DataStore", error)
-                                                );
+            if (file != null) {
+                Amplify.Storage.uploadFile(
+                        title + ".jpg",
+                        file, // From upload picker Image OR share Image
+                        result -> {
+                            Log.i(TAG, "Successfully uploaded: " + result.getKey());
+                            runOnUiThread(() -> {
+                                imageKey = result.getKey();
+                                // Lab 32  // Add the Task to the DynamoDB
+                                Amplify.API.query(
+                                        ModelQuery.list(Team.class, Team.NAME.eq(team_String)),
+                                        response -> {
+                                            for (Team teamLoop : response.getData()) {
+                                                if (teamLoop.getName().equals(team_String)) {
+                                                    Task task = Task.builder()
+                                                            .title(title)
+                                                            .teamTasksId(teamLoop.getId())
+                                                            .description(description)
+                                                            .state(Enum.valueOf(State.class, state_String))
+                                                            .image(imageKey)
+                                                            .latitude(latitude)
+                                                            .longitude(longitude)
+                                                            .build();
+                                                    Log.i(TAG, "***** Saved item: " + task);
+                                                    // Data store save
+                                                    Amplify.DataStore.save(task,
+                                                            success -> Log.i(TAG, "Saved item: " + success.item().getTitle()),
+                                                            error -> Log.e(TAG, "Could not save item to DataStore", error)
+                                                    );
 
-                                                // API save to backend
-                                                Amplify.API.mutate(
-                                                        ModelMutation.create(task),
-                                                        success -> Log.i(TAG, "Saved item: " + success.getData().getTitle()),
-                                                        error -> Log.e(TAG, "Could not save item to API", error)
-                                                );
+                                                    // API save to backend
+                                                    Amplify.API.mutate(
+                                                            ModelMutation.create(task),
+                                                            success -> Log.i(TAG, "Saved item: " + success.getData().getTitle()),
+                                                            error -> Log.e(TAG, "Could not save item to API", error)
+                                                    );
+                                                }
                                             }
-                                        }
 
-                                    },
-                                    error -> Log.e(TAG, error.toString(), error)
-                            );
-                        });
-                    },
-                    storageFailure -> Log.e(TAG, "Upload failed", storageFailure)
+                                        },
+                                        error -> Log.e(TAG, error.toString(), error)
+                                );
+                            });
+                        },
+                        storageFailure -> Log.e(TAG, "Upload failed", storageFailure)
 
-            );
+                );
 
+            }else {
+                // Lab 32  // Add the Task to the DynamoDB
+                Amplify.API.query(
+                        ModelQuery.list(Team.class, Team.NAME.eq(team_String)),
+                        response -> {
+                            for (Team teamLoop : response.getData()) {
+                                if (teamLoop.getName().equals(team_String)) {
+                                    Task task = Task.builder()
+                                            .title(title)
+                                            .teamTasksId(teamLoop.getId())
+                                            .description(description)
+                                            .state(Enum.valueOf(State.class, state_String))
+                                            .latitude(latitude)
+                                            .longitude(longitude)
+                                            .build();
+                                    Log.i(TAG, "***** Saved item: " + task);
+                                    // Data store save
+                                    Amplify.DataStore.save(task,
+                                            success -> Log.i(TAG, "Saved item: " + success.item().getTitle()),
+                                            error -> Log.e(TAG, "Could not save item to DataStore", error)
+                                    );
+
+                                    // API save to backend
+                                    Amplify.API.mutate(
+                                            ModelMutation.create(task),
+                                            success -> Log.i(TAG, "Saved item: " + success.getData().getTitle()),
+                                            error -> Log.e(TAG, "Could not save item to API", error)
+                                    );
+                                }
+                            }
+
+                        },
+                        error -> Log.e(TAG, error.toString(), error)
+                );
+            }
             Toast.makeText(getApplicationContext(), "task Added", Toast.LENGTH_SHORT).show();
             addButton.setBackgroundColor(Color.RED);
-
         }
+
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_task);
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        // method to get the location
+        getLastLocation();
 
 //        // https://developer.android.com/training/basics/intents/filters
 //        // Get the intent that started this activity
@@ -377,4 +462,118 @@ public class AddTask extends AppCompatActivity {
         }
     } // Author: silentnuke
 
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+
+    }
+
+
+    @SuppressLint("MissingPermission")
+    private void getLastLocation() {
+        // check if permissions are given
+        if (checkPermissions()) {
+
+            // check if location is enabled
+            if (isLocationEnabled()) {
+
+                // getting last
+                // location from
+                // FusedLocationClient
+                // object
+                mFusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<Location> task) {
+                        Location location = task.getResult();
+                        if (location == null) {
+                            requestNewLocationData();
+                        } else {
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
+
+                        }
+                    }
+
+                });
+            } else {
+                Toast.makeText(this, "Please turn on" + " your location...", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+        } else {
+            // if permissions aren't available,
+            // request for permissions
+            requestPermissions();
+        }
+
+    }
+
+    @SuppressLint("MissingPermission")
+    private void requestNewLocationData() {
+
+        // Initializing LocationRequest
+        // object with appropriate methods
+        LocationRequest mLocationRequest = new LocationRequest();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(5);
+        mLocationRequest.setFastestInterval(0);
+        mLocationRequest.setNumUpdates(1);
+
+        // setting LocationRequest
+        // on FusedLocationClient
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+    }
+
+    // method to check for permissions
+    private boolean checkPermissions() {
+        return ActivityCompat
+                .checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED
+                &&
+                ActivityCompat
+                        .checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                        PackageManager.PERMISSION_GRANTED;
+
+        // If we want background location
+        // on Android 10.0 and higher,
+        // use:
+        // ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED
+    }
+
+    // method to request for permissions
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_ID);
+    }
+
+    // method to check
+    // if location is enabled
+    private boolean isLocationEnabled() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    // If everything is alright then
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PERMISSION_ID) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getLastLocation();
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (checkPermissions()) {
+            getLastLocation();
+        }
+    }
 }
+
