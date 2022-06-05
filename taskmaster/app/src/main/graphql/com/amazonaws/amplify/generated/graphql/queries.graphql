@@ -10,6 +10,8 @@ query GetTeam($id: ID!) {
         description
         state
         image
+        latitude
+        longitude
         createdAt
         updatedAt
         _version
@@ -86,6 +88,8 @@ query GetTask($id: ID!) {
     description
     state
     image
+    latitude
+    longitude
     createdAt
     updatedAt
     _version
@@ -106,6 +110,8 @@ query ListTasks(
       description
       state
       image
+      latitude
+      longitude
       createdAt
       updatedAt
       _version
@@ -135,6 +141,8 @@ query SyncTasks(
       description
       state
       image
+      latitude
+      longitude
       createdAt
       updatedAt
       _version
