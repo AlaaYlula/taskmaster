@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +23,11 @@ import com.amplifyframework.datastore.generated.model.Task;
 import com.bumptech.glide.Glide;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 
 public class DetailTask extends AppCompatActivity {
@@ -38,6 +44,9 @@ public class DetailTask extends AppCompatActivity {
     Bitmap bitmap = null;
 
     Task task;
+
+    private final MediaPlayer mp = new MediaPlayer();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,6 +126,31 @@ public class DetailTask extends AppCompatActivity {
 
         });
 
+        // Sound button
+        Button soundBtn = findViewById(R.id.sound);
+        soundBtn.setOnClickListener(view -> {
+            Amplify.Predictions.convertTextToSpeech(
+                    body.getText().toString(),
+                    result -> playAudio(result.getAudioData()),
+                    error -> Log.e(TAG, "Conversion failed", error)
+            );
+        });
+
+        // translate button
+        Button translateBtn = findViewById(R.id.translate);
+        translateBtn.setOnClickListener(view -> {
+            Amplify.Predictions.translateText(body.getText().toString(),
+                    result -> {
+                Log.i(TAG, result.getTranslatedText());
+
+                        runOnUiThread(() -> {
+                            TextView translateResult = findViewById(R.id.translate_text);
+                            translateResult.setText(result.getTranslatedText());
+                        });
+                    },
+                    error -> Log.e(TAG, "Translation failed", error)
+            );
+        });
         //Back Button
         Button backButton = findViewById(R.id.backButton);
         backButton.setOnClickListener(view -> {
@@ -144,6 +178,24 @@ public class DetailTask extends AppCompatActivity {
             //start
             startActivity(startMainTaskActivity);
         });
+    }
+
+    private void playAudio(InputStream audioData) {
+        File mp3File = new File(getCacheDir(), "audio.mp3");
+
+        try (OutputStream out = new FileOutputStream(mp3File)) {
+            byte[] buffer = new byte[8 * 1_024];
+            int bytesRead;
+            while ((bytesRead = audioData.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesRead);
+            }
+            mp.reset();
+            mp.setOnPreparedListener(MediaPlayer::start);
+            mp.setDataSource(new FileInputStream(mp3File).getFD());
+            mp.prepareAsync();
+        } catch (IOException error) {
+            Log.e("MyAmplifyApp", "Error writing audio file", error);
+        }
     }
 
     private void setImage(String image, Task taskTest) {

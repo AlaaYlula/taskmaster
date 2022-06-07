@@ -189,3 +189,28 @@ If the Application receive an image from other application this activity will ge
 ![home](./screenshots/lab39/turnOnLocation39.PNG)      
 **Detail Page**  
 ![detial](./screenshots/lab39/longitude_lititude.PNG)    
+  
+
+### Lab 41
+Use **Amazon Pinpoint** to do analytics.  
+Use **Amazon Polly** to translate text and convert text to speech, I add the Polly permissin to the user from IAM.  
+Use **implements OnMapReadyCallback** for getting the location and eask for permission and access the location.  
+Use Intent Filter to receive image from other applications.  
+Use S3 for store images.  
+Use Cognito for Authentication.
+Build a signed APK for the application.  
+Start Work with AWS Amplify.  
+* Login page: has signup prompt. And create a AlertDialog if error happens.  
+* Signup page: has signin prompt. And create a AlertDialog if error happens. redirect to the verification code page when end the signup.   
+* Verification code page: Enter the verification code and go to loggin page.  
+* Main Activity : has two Tasks buttons, Add Task and All Tasks, the user name , and list for the all tasks(The List of tasks must be only the ones which belongs to the team).
+* Settings Activity : Let the user write his/het user name, chose the team and submit by click on submit button to save the username and the team name.  
+* DetailTask Activity : show the image for this task and the task title you pressed, description, and the state for this task, and the longitude and latitude for the user location. It has delete button for deleteing this task(Not work now).And It has a translate button for the task description and button to convert the description text to speech.  
+* AddTask Activity : add the title, description, image and the team for this Task, and the location for the user.   
+If the Application receive an image from other application this activity will get the intent, and upload the image to the task.  
+* Add CustomAdapter so we can deal with the RecyclerView. 
+* Add  AWS Amplify and use the DynamoDB to store the tasks record.   
+**Details Page has translate and sound buttons**  
+![per](./screenshots/lab41/detail41.PNG)           
+**Detail Page with translate**  
+![detial](./screenshots/lab41/translate41.PNG)       
