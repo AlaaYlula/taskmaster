@@ -44,7 +44,6 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 
 
@@ -59,7 +58,11 @@ import java.net.HttpURLConnection;
 
 import java.net.URL;
 import java.util.ArrayList;
-
+import com.amplifyframework.geo.maplibre.view.MapLibreView;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
 
 public class AddTask extends AppCompatActivity implements OnMapReadyCallback  {
     private static final String TAG = "AddTask";
@@ -86,6 +89,8 @@ public class AddTask extends AppCompatActivity implements OnMapReadyCallback  {
 
     private double latitude;
     private double longitude;
+    private MapLibreView mapView;
+
     // in requestNewLocationData()
     private final LocationCallback mLocationCallback = new LocationCallback() {
 
@@ -94,6 +99,26 @@ public class AddTask extends AppCompatActivity implements OnMapReadyCallback  {
             Location mLastLocation = locationResult.getLastLocation();
             latitude = mLastLocation.getLatitude();
             longitude=mLastLocation.getLongitude();
+            LatLng seattle = new LatLng(latitude, -longitude);
+
+//            mapView.getMapAsync(map -> {
+//                map.setCameraPosition(
+//                        new CameraPosition.Builder()
+//                                .target(seattle)
+//                                .zoom(13.0)
+//                                .build()
+//                );
+//            });
+//
+//            mapView.getStyle((map, style) -> {
+//                mapView.symbolManager.create(
+//                        new SymbolOptions()
+//                                .withIconImage("place")
+//                                .withLatLng(seattle)
+//                );
+//                map.animateCamera(CameraUpdateFactory.newLatLngZoom(seattle, 16.0));
+//            });
+
         }
     };
 
@@ -234,8 +259,11 @@ public class AddTask extends AppCompatActivity implements OnMapReadyCallback  {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         // method to get the location
-        getLastLocation();
 
+        getLastLocation();
+        // Map
+//        setContentView(R.layout.activity_main);
+//        mapView = findViewById(R.id.mapView);
 //        // https://developer.android.com/training/basics/intents/filters
 //        // Get the intent that started this activity
 //        Intent intentReceive = getIntent();
@@ -275,6 +303,7 @@ public class AddTask extends AppCompatActivity implements OnMapReadyCallback  {
         // Add Task Button
         addButton = findViewById(R.id.button);
         addButton.setOnClickListener(addButtonListener);
+
 
         ////////////////////// create adapter for the State Spinner
         setStateSpinner();
@@ -490,6 +519,24 @@ public class AddTask extends AppCompatActivity implements OnMapReadyCallback  {
                         } else {
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
+                            LatLng seattle = new LatLng(latitude, -longitude);
+//                            mapView.getMapAsync(map -> {
+//                                map.setCameraPosition(
+//                                        new CameraPosition.Builder()
+//                                                .target(seattle)
+//                                                .zoom(13.0)
+//                                                .build()
+//                                );
+//                            });
+//                            mapView.getStyle((map, style) -> {
+//                                mapView.symbolManager.create(
+//                                        new SymbolOptions()
+//                                                .withIconImage("place")
+//                                                .withLatLng(seattle)
+//                                );
+//                                map.animateCamera(CameraUpdateFactory.newLatLngZoom(seattle, 16.0));
+//                            });
+
 
                         }
                     }

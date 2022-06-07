@@ -4,10 +4,13 @@ import android.app.Application;
 import android.util.Log;
 
 import com.amplifyframework.AmplifyException;
+import com.amplifyframework.analytics.AnalyticsEvent;
+import com.amplifyframework.analytics.pinpoint.AWSPinpointAnalyticsPlugin;
 import com.amplifyframework.api.aws.AWSApiPlugin;
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
 import com.amplifyframework.core.Amplify;
 import com.amplifyframework.datastore.AWSDataStorePlugin;
+import com.amplifyframework.predictions.aws.AWSPredictionsPlugin;
 import com.amplifyframework.storage.s3.AWSS3StoragePlugin;
 
 
@@ -22,11 +25,25 @@ public class taskMasterApplication extends Application {
 
         // Amplify Configure
         configureAmplify();
+
+        AnalyticsEvent event = AnalyticsEvent.builder()
+                .name("Open")
+                .addProperty("Channel", "SMS")
+                .addProperty("Successful", true)
+                .addProperty("ProcessDuration", 792)
+                .addProperty("UserAge", 120.3)
+                .build();
+
+        Amplify.Analytics.recordEvent(event);
+
+
     }
 /////////////////////////////////////////////////////// AWS Amplify ///////////////////////////
 
     private void configureAmplify() {
         try {
+            Amplify.addPlugin(new AWSPredictionsPlugin());
+            Amplify.addPlugin(new AWSPinpointAnalyticsPlugin(this));
             Amplify.addPlugin(new AWSLocationGeoPlugin());
             Amplify.addPlugin(new AWSS3StoragePlugin());
             Amplify.addPlugin(new AWSCognitoAuthPlugin());

@@ -40,6 +40,15 @@ public class SettingsActivity extends AppCompatActivity {
         mUsernameEdit = findViewById(R.id.username);
         TeamSelector = findViewById(R.id.teams);
 
+        //Back Button
+        Button backButton = findViewById(R.id.backButton);
+        backButton.setOnClickListener(view -> {
+            // Create Intent
+            Intent startMainTaskActivity = new Intent(getApplicationContext(),MainActivity.class);
+            //start
+            startActivity(startMainTaskActivity);
+        });
+
         ////////////////////// Team Spinner
 
         Amplify.API.query(
