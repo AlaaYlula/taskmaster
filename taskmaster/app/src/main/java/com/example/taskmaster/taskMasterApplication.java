@@ -15,6 +15,10 @@ import com.amplifyframework.storage.s3.AWSS3StoragePlugin;
 
 
 import com.amplifyframework.geo.location.AWSLocationGeoPlugin;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+
 public class taskMasterApplication extends Application {
 
     private static final String TAG = taskMasterApplication.class.getSimpleName() ;
@@ -26,6 +30,7 @@ public class taskMasterApplication extends Application {
         // Amplify Configure
         configureAmplify();
 
+        // For Analytics
         AnalyticsEvent event = AnalyticsEvent.builder()
                 .name("Open")
                 .addProperty("Channel", "SMS")
@@ -35,6 +40,14 @@ public class taskMasterApplication extends Application {
                 .build();
 
         Amplify.Analytics.recordEvent(event);
+
+           // needs to be initialised once
+                MobileAds.initialize(this, new OnInitializationCompleteListener() {
+                    @Override
+                    public void onInitializationComplete(InitializationStatus initializationStatus) {
+                        Log.i(TAG, "onInitializationComplete: ADMOB INITIALIZED");
+                    }
+                });
 
 
     }
