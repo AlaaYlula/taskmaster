@@ -237,8 +237,8 @@ If the Application receive an image from other application this activity will ge
 * Add CustomAdapter so we can deal with the RecyclerView. 
 * Add  AWS Amplify and use the DynamoDB to store the tasks record.   
 **Banner Ads**  
-![banner](./screenshots/lab42/ads_banner.PNG)           
+![banner](./screenshots/lab42/ads_banner.PNG)             
 **Interstitial Ad**  
-![Int](./screenshots/lab42/Interstitial_Ad.PNG)  
+![Int](./screenshots/lab42/Interstitial_Ad.PNG)    
 **Rewaeded Ad**  
 ![rewarded](./screenshots/lab42/rewardedAds.PNG)      
