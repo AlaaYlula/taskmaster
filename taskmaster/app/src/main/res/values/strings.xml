@@ -58,4 +58,6 @@
         <string name="register">Register</string>
         <string name="your_name">User Name</string>
     <string name="translate">Translate</string>
+    <string name="IntAds">Interstitial_Ad</string>
+    <string name="Rewarded_Ad">Rewarded_Ad</string>
 </resources>
